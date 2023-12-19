@@ -113,30 +113,45 @@ class HBNBCommand(cmd.Cmd):
         """ Overrides the emptyline method of CMD """
         pass
 
-    
     def do_create(self, args):
         """ Create an object of any class"""
-        if not args:
-            print("** class name missing **")
-            return
-        elif args not in HBNBCommand.classes:
-            print("** class doesn't exist **")
-            return       
-        args_list = args.split(" ")
-        kwords = {}
-        for arg in args_list[1:]:
-            arg_splited = arg.split("=")
-            arg_splited[1] = eval(arg_splited[1])
-            if type(arg_splited[1]) is str:
-                arg_splited[1] = arg_splited[1].replace("_", " ").replace('"', '\\"')
-            kwords[arg_splited[0]] = arg_splited[1]
-        
-        new_instance = HBNBCommand.classes[args_list[0]](**kwords)
-        storage.save()
-        print(new_instance.id)
-        storage.save()
+        try:
+            if not args:
+                raise SyntaxError()
 
-   
+            args_list = args.split(" ")
+
+            kwords = {}
+            for i in range(1, len(args_list)):
+                # Split each parameter into key and value
+                key, value = tuple(args_list[i].split("="))
+
+                # Evaluate the value based on its syntax
+                if value[0] == '"' and value[-1] == '"':
+                    # Handle string: Remove double quotes and replace underscores
+                    value = value[1:-1].replace('\\"', '"').replace('_', ' ')
+                else:
+                    # Handle float
+                    try:
+                        value = eval(value)
+                    except (SyntaxError, NameError):
+                        continue
+                # Add the key-value pair to the dictionary
+                kwords[key] = value
+
+            if kwords == {}:
+                new_instance = eval(args_list[0])()
+            else:
+                new_instance = eval(args_list[0])(**kwords)
+                storage.new(new_instance)
+
+            print(new_instance.id)
+            new_instance.save()
+
+        except SyntaxError:
+            print("** class name missing **")
+        except NameError:
+            print("** class doesn't exist **")
 
     def help_create(self):
         """ Help information for the create method """
