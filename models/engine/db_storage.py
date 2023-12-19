@@ -7,7 +7,7 @@ for the Airbnb clone.
 import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
-from models.base_model import Base  # This is the declarative base for our models
+from models.base_model import Base  # The declarative base for our models
 
 
 class DBStorage:
@@ -75,5 +75,5 @@ class DBStorage:
         """
         Base.metadata.create_all(self.__engine)
         Session = scoped_session(sessionmaker(bind=self.__engine,
-			         expire_on_commit=False))
+                                              expire_on_commit=False))
         self.__session = Session()
