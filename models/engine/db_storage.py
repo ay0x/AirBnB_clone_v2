@@ -8,6 +8,14 @@ import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from models.base_model import Base  # The declarative base for our models
+from models.base_model import BaseModel
+from models.amenity import Amenity
+from models.city import City
+from models.place import Place
+from models.review import Review
+from models.state import State
+from models.user import User
+from sqlalchemy import column
 
 
 class DBStorage:
@@ -40,17 +48,19 @@ class DBStorage:
         Return:
             Dict of queried classes in the format <class name>.<obj id> = obj
         """
-        from models import storage
-        classes = ["User", "State", "City", "Amenity", "Place", "Review"]
 
         if cls is None:
-            objects = []
-            for c in classes:
-                objects += list(storage.all(eval(c)).values())
+            objs = self.__session.query(State.__table__).all()
+            objs.extend(self.__session.query(City.__table__).all())
+            objs.extend(self.__session.query(column('users')).all())
+            objs.extend(self.__session.query(Place.__table__).all())
+            objs.extend(self.__session.query(Review.__table__).all())
+            objs.extend(self.__session.query(Amenity.__table__).all())
         else:
-            objects = list(storage.all(cls).values())
-
-        return {obj.__class__.__name__ + '.' + obj.id: obj for obj in objects}
+            if type(cls) == str:
+                cls = eval(cls)
+            objs = self.__session.query(cls)
+        return {"{}.{}".format(type(o).__name__, o.id): o for o in objs}
 
     def new(self, obj):
         """Add the object to the current database session (self.__session).
