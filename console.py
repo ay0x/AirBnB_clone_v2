@@ -216,7 +216,7 @@ class HBNBCommand(cmd.Cmd):
     def do_all(self, line):
         """ Shows all objects, or all objects of a class"""
         args = line.split()
-        #list = []
+        obj_list = []
 
         if not args:
             all_objs = storage.all().values()
@@ -229,11 +229,14 @@ class HBNBCommand(cmd.Cmd):
             all_objs = [obj for obj in storage.all().values()
                         if obj.__class__.__name__ == class_name]
 
-        objs_formatted = [f"[{str(obj)} {obj.to_dict()}]"
-                          for obj in all_objs]
-
-        for obj in objs_formatted:
-            print(obj)
+        print("[", end="")
+        for obj in all_objs:
+            # Remove '_sa_instance_state' key if present
+            obj_dict = obj.to_dict()
+            if '_sa_instance_state' in obj_dict:
+                del obj_dict["_sa_instance_state"]
+            print(obj, end=", " if obj != all_objs[-1] else "")
+        print("]")
 
     def help_all(self):
         """ Help information for the all command """
