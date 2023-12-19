@@ -12,7 +12,8 @@ class FileStorage:
         """Returns a dictionary of models currently in storage"""
         if cls is not None:
             # Extract the specified class objects from storage
-            cls_objects = {k: v for k, v in FileStorage.__objects.items() if isinstance(v, cls)}
+            cls_objects = {k: v for k, v in FileStorage.__objects.items()
+                           if isinstance(v, cls)}
             return cls_objects
         else:
             return FileStorage.__objects
@@ -50,7 +51,7 @@ class FileStorage:
             with open(FileStorage.__file_path, 'r') as f:
                 temp = json.load(f)
                 for key, val in temp.items():
-                        self.all()[key] = classes[val['__class__']](**val)
+                    self.all()[key] = classes[val['__class__']](**val)
         except FileNotFoundError:
             pass
 
