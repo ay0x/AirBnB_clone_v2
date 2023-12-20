@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/opt/homebrew/bin/python3
 """ Console Module """
 import cmd
 import sys
@@ -141,22 +141,21 @@ class HBNBCommand(cmd.Cmd):
             print("** class name missing **")
         except NameError:
             print("** class doesn't exist **")
-            return       
-        args_list = args.split(" ")
+            return
+        """args_list = args.split(" ")
         kwords = {}
         for arg in args_list[1:]:
             arg_splited = arg.split("=")
             arg_splited[1] = eval(arg_splited[1])
             if type(arg_splited[1]) is str:
-                arg_splited[1] = arg_splited[1].replace("_", " ").replace('"', '\\"')
+                arg_splited[1] = arg_splited[1].replace("_", " ")
+                    .replace('"', '\\"')
             kwords[arg_splited[0]] = arg_splited[1]
-        
+
         new_instance = HBNBCommand.classes[args_list[0]](**kwords)
         storage.save()
         print(new_instance.id)
-        storage.save()
-
-   
+        storage.save()"""
 
     def help_create(self):
         """ Help information for the create method """
@@ -219,7 +218,7 @@ class HBNBCommand(cmd.Cmd):
         key = c_name + "." + c_id
 
         try:
-            del(storage.all()[key])
+            del (storage.all()[key])
             storage.save()
         except KeyError:
             print("** no instance found **")
