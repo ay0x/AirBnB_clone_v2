@@ -135,7 +135,7 @@ class HBNBCommand(cmd.Cmd):
                 storage.new(new_instance)
 
             print(new_instance.id)
-            new_instance.save()
+            #new_instance.save()
 
         except SyntaxError:
             print("** class name missing **")
