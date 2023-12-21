@@ -1,23 +1,22 @@
 #!/opt/homebrew/bin/python3
-""" Console Module """
+"""Defines the HBNB console."""
 import cmd
-import sys
+from shlex import split
+from models import storage
+from datetime import datetime
 from models.base_model import BaseModel
-from models.__init__ import storage
 from models.user import User
-from models.place import Place
 from models.state import State
 from models.city import City
 from models.amenity import Amenity
+from models.place import Place
 from models.review import Review
 
 
 class HBNBCommand(cmd.Cmd):
-    """ Contains the functionality for the HBNB console"""
+    """Defines the HolbertonBnB command interpreter."""
 
-    # determines prompt for interactive/non-interactive modes
-    prompt = '(hbnb) '
-
+    prompt = "(hbnb) "
     classes = {
                'BaseModel': BaseModel, 'User': User, 'Place': Place,
                'State': State, 'City': City, 'Amenity': Amenity,
@@ -107,7 +106,6 @@ class HBNBCommand(cmd.Cmd):
         try:
             if not args:
                 raise SyntaxError()
-
             args_list = args.split(" ")
 
             kwords = {}
@@ -116,9 +114,9 @@ class HBNBCommand(cmd.Cmd):
                 key, value = tuple(args_list[i].split("="))
 
                 # Evaluate the value based on its syntax
-                if value[0] == '"' and value[-1] == '"':
+                if value[0] == '"':
                     # Handle string: Remove double quotes, replace underscores
-                    value = value[1:-1].replace('\\"', '"').replace('_', ' ')
+                    value = value.strip('"').replace("_", " ")
                 else:
                     # Handle float
                     try:
@@ -133,7 +131,6 @@ class HBNBCommand(cmd.Cmd):
             else:
                 new_instance = eval(args_list[0])(**kwords)
                 storage.new(new_instance)
-
             print(new_instance.id)
             new_instance.save()
 
@@ -141,21 +138,6 @@ class HBNBCommand(cmd.Cmd):
             print("** class name missing **")
         except NameError:
             print("** class doesn't exist **")
-            return
-        """args_list = args.split(" ")
-        kwords = {}
-        for arg in args_list[1:]:
-            arg_splited = arg.split("=")
-            arg_splited[1] = eval(arg_splited[1])
-            if type(arg_splited[1]) is str:
-                arg_splited[1] = arg_splited[1].replace("_", " ")
-                    .replace('"', '\\"')
-            kwords[arg_splited[0]] = arg_splited[1]
-
-        new_instance = HBNBCommand.classes[args_list[0]](**kwords)
-        storage.save()
-        print(new_instance.id)
-        storage.save()"""
 
     def help_create(self):
         """ Help information for the create method """
@@ -359,5 +341,5 @@ class HBNBCommand(cmd.Cmd):
         print("Usage: update <className> <id> <attName> <attVal>\n")
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     HBNBCommand().cmdloop()
