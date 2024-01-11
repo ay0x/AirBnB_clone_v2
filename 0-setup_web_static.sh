@@ -12,7 +12,7 @@ sudo mkdir -p /data/web_static/releases/test
 sudo mkdir -p /data/web_static/shared
 
 # Create a fake HTML file
-echo "<html><head></head><body>AirBnB Clone Web Static Test</body></html>" | sudo tee /data/web_static/releases/test/index.html > /dev/null
+echo "Nginx Tested!" | sudo tee /data/web_static/releases/test/index.html > /dev/null
 
 # Create or recreate symbolic link
 sudo rm -rf /data/web_static/current	# -rf: force remove files and folders (recursively)
@@ -23,12 +23,10 @@ sudo chown -R ubuntu:ubuntu /data/		# -R: recursive
 
 # Update Nginx configuration to serve the content of /data/web_static/current/ to hbnb_static
 nginx_config="/etc/nginx/sites-available/default"
+sudo sed -i "/server_name _;/a \\\n\\tadd_header X-Served-By $HOSTNAME;" "$nginx_config"
+
 if ! grep -q "location /hbnb_static {" "$nginx_config"; then
-	sudo sed -i '/server_name _;/a \
-	\ \ \ \ location /hbnb_static {\n \
-	\ \ \ \ \ \ \ \ alias /data/web_static/current/;\n \
-	\ \ \ \ \ \ \ \ index index.html;\n \
-	\ \ \ \ }' "$nginx_config"
+	sudo sed -i "/server_name _;/a \\\n\\tlocation /hbnb_static {\\n\\t\\talias /data/web_static/current/;\\n\\tindex index.html;\\n\\t}" "$nginx_config"
 fi
 
 # Restart Nginx
