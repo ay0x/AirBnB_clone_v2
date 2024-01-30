@@ -57,7 +57,7 @@ class DBStorage:
             objs.extend(self.__session.query(Review.__table__).all())
             objs.extend(self.__session.query(Amenity.__table__).all())
         else:
-            if type(cls) == str:
+            if type(cls) is str:
                 cls = eval(cls)
             objs = self.__session.query(cls).all()
         return {"{}.{}".format(type(o).__name__, o.id): o for o in objs}
@@ -87,7 +87,7 @@ class DBStorage:
         Session = scoped_session(sessionmaker(bind=self.__engine,
                                               expire_on_commit=False))
         self.__session = Session()
-    
+
     def close(self):
         """Closes session created by ORM"""
         self.__session.close()
